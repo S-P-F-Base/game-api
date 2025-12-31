@@ -16,7 +16,7 @@ def static_with_version(file: str) -> str:
     v = int(static_path.stat().st_mtime) if static_path.exists() else 0
 
     if USE_ACCEL:
-        return f"/game_api/static/{file}?v={v}"
+        return f"/game/static/{file}?v={v}"
 
     else:
         return f"/static/{file}?v={v}"
