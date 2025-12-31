@@ -1,7 +1,4 @@
-from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
-
-from template_env import templates
+from fastapi import APIRouter
 
 router = APIRouter()
 
