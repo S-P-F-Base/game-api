@@ -54,7 +54,7 @@ def pick_weighted_media():
         return None, None
 
     chosen: Path = random.choice(candidates)
-    url = "{{ /loading_media/" + chosen.name + " | ver }}"
+    url = "{{ loading_media/" + chosen.name + " | ver }}"
 
     media_type = "video" if chosen.suffix.lower() in {".mp4", ".webm"} else "image"
     return url, media_type
