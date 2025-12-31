@@ -38,13 +38,12 @@ def pick_weighted_media():
         if not path.is_file():
             continue
 
-        ext = path.suffix.lower()
-        if ext not in {".png", ".jpg", ".jpeg", ".mp4", ".webm"}:
+        if path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".mp4", ".webm"}:
             continue
 
         try:
-            weight_str = path.name.split("_", 1)[0]
-            weight = int(weight_str)
+            weight = int(path.name.split("_", 1)[0])
+
         except (ValueError, IndexError):
             continue
 
@@ -53,11 +52,12 @@ def pick_weighted_media():
     if not candidates:
         return None, None
 
-    chosen: Path = random.choice(candidates)
-    url = "{{ loading_media/" + chosen.name + " | ver }}"
+    chosen = random.choice(candidates)
+
+    rel_path = f"loading_media/{chosen.name}"
 
     media_type = "video" if chosen.suffix.lower() in {".mp4", ".webm"} else "image"
-    return url, media_type
+    return rel_path, media_type
 
 
 @router.get("/game/loading", response_class=HTMLResponse)

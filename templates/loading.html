@@ -12,7 +12,7 @@
     {% if media_type == "image" %}
     <style>
         body {
-            background: url('{{ media_url }}') no-repeat center center fixed;
+            background: url('{{ media_url | ver }}') no-repeat center center fixed;
             background-size: cover;
         }
     </style>
@@ -23,7 +23,7 @@
 
     {% if media_type == "video" %}
     <video id="bg-video" autoplay muted loop playsinline>
-        <source src="{{ media_url }}" type="video/mp4">
+        <source src="{{ media_url | ver }}">
     </video>
 
     <style>
