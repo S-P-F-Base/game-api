@@ -1,7 +1,6 @@
 "use strict";
 
 let isGmod = false;
-let isTest = false;
 let totalFiles = 0;
 let totalCalled = false;
 let downloadingFileCalled = false;
@@ -20,8 +19,9 @@ function setLoad(percent) {
 
 function addToHistory(text) {
     const historyEl = document.getElementById("history");
-    const item = document.createElement("div");
+    if (!historyEl) return;
 
+    const item = document.createElement("div");
     item.className = "history-item";
     item.textContent = text;
 
@@ -34,8 +34,10 @@ function addToHistory(text) {
     });
 }
 
+/* Garry's Mod callbacks */
 function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
     isGmod = true;
+
     const mapEl = document.getElementById("mapname");
     if (mapEl) mapEl.textContent = mapname;
 }
@@ -61,11 +63,11 @@ function SetFilesNeeded(needed) {
 function DownloadingFile(filename) {
     filename = filename.replace(/['"?]/g, "");
     downloadingFileCalled = true;
-    addToHistory(`Файл: ${filename}`);
+    addToHistory(`${filename}`);
 }
 
 function SetStatusChanged(status) {
-    addToHistory(`${status}`);
+    addToHistory(status);
 
     switch (status) {
         case "Workshop Complete":
@@ -88,29 +90,3 @@ function SetStatusChanged(status) {
             }
     }
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => {
-        if (!isGmod) {
-            isTest = true;
-
-            GameDetails("SPF Base", "", "rp_downtown", 64, "76561198000000000", "militaryrp");
-            SetFilesTotal(25);
-
-            let needed = 25;
-
-            const interval = setInterval(() => {
-                if (needed > 0) {
-                    needed -= 1;
-                    SetFilesNeeded(needed);
-                    DownloadingFile(`materials/example_${needed}.vtf`);
-                } else {
-                    clearInterval(interval);
-                    SetStatusChanged("Starting Lua...");
-                }
-            }, 300);
-
-            SetStatusChanged("Connecting...");
-        }
-    }, 1000);
-});

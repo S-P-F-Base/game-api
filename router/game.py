@@ -31,39 +31,34 @@ def resolve_name_from_steam(steamid: str) -> str:
     return "гость"
 
 
-def pick_weighted_media():
+def pick_weighted_media() -> str | None:
     candidates: list[Path] = []
 
     for path in LOADING_MEDIA_DIR.iterdir():
         if not path.is_file():
             continue
 
-        if path.suffix.lower() not in {".png", ".jpg", ".jpeg", ".mp4", ".webm"}:
+        if path.suffix.lower() not in {".png", ".jpg", ".jpeg"}:
             continue
 
         try:
             weight = int(path.name.split("_", 1)[0])
-
         except (ValueError, IndexError):
             continue
 
         candidates.extend([path] * weight)
 
     if not candidates:
-        return None, None
+        return None
 
     chosen = random.choice(candidates)
-
-    rel_path = f"loading_media/{chosen.name}"
-
-    media_type = "video" if chosen.suffix.lower() in {".mp4", ".webm"} else "image"
-    return rel_path, media_type
+    return f"loading_media/{chosen.name}"
 
 
 @router.get("/game/loading", response_class=HTMLResponse)
 def loading(request: Request, steamid: str = "", mapname: str = ""):
     name = resolve_name_from_steam(steamid) if steamid else "гость"
-    media_url, media_type = pick_weighted_media()
+    media_url = pick_weighted_media()
 
     return templates.TemplateResponse(
         "loading.html",
@@ -72,7 +67,6 @@ def loading(request: Request, steamid: str = "", mapname: str = ""):
             "mapname": mapname,
             "name": name,
             "media_url": media_url,
-            "media_type": media_type,
         },
     )
 
