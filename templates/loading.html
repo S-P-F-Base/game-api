@@ -9,7 +9,7 @@
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="{{ 'css/loading.css' | ver }}" />
 
-    {% if media_type == "image" %}
+    {% if media_url %}
     <style>
         body {
             background: url('{{ media_url | ver }}') no-repeat center center fixed;
