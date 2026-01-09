@@ -3,7 +3,7 @@ import random
 from pathlib import Path
 
 import httpx
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Request, Response
 from fastapi.responses import HTMLResponse
 
 from template_env import templates
@@ -78,29 +78,35 @@ async def loading(request: Request, steamid: str = "", mapname: str = ""):
 @router.get("/game/{file_name}")
 def get_page(request: Request, file_name: str):
     if not file_name or file_name.strip() != file_name:
-        raise HTTPException(400, "Invalid file name")
+        return Response(
+            content="Invalid file name",
+            status_code=400,
+            media_type="text/html",
+        )
 
     if not file_name.endswith(".html"):
         file_name += ".html"
 
-    safe_path = Path(file_name)
-    if safe_path.is_absolute() or any(part == ".." for part in safe_path.parts):
-        raise HTTPException(400, "Invalid file path")
-
-    file_path = HTML_DIR / safe_path
+    file_path = HTML_DIR / Path(file_name)
 
     try:
         file_path.resolve().relative_to(HTML_DIR.resolve())
 
     except ValueError:
-        raise HTTPException(400, "Invalid file path")
+        return Response(
+            content="Forbidden",
+            status_code=403,
+            media_type="text/html",
+        )
 
-    if not file_path.exists() or not file_path.is_file():
-        raise HTTPException(404, "File not found")
+    if not file_path.is_file():
+        return Response(
+            content="File not found",
+            status_code=404,
+            media_type="text/html",
+        )
 
     return templates.TemplateResponse(
         file_name,
-        {
-            "request": request,
-        },
+        {"request": request},
     )
