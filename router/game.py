@@ -1,11 +1,11 @@
+import os
 import random
 from pathlib import Path
 
-import requests
+import httpx
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
-from config import Config
 from template_env import templates
 
 router = APIRouter()
@@ -15,9 +15,9 @@ LOADING_MEDIA_DIR = Path("static/loading_media")
 
 def resolve_name_from_steam(steamid: str) -> str:
     try:
-        response = requests.get(
+        response = httpx.get(
             "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/",
-            params={"key": Config.steam_api(), "steamids": steamid},
+            params={"key": os.getenv("steam_api"), "steamids": steamid},
             timeout=3.0,
         )
         response.raise_for_status()
