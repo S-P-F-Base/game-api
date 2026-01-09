@@ -75,6 +75,15 @@ async def loading(request: Request, steamid: str = "", mapname: str = ""):
     )
 
 
+@router.get("/game/")
+def get_page_root(request: Request):
+    return Response(
+        content="Forbidden",
+        status_code=403,
+        media_type="text/html",
+    )
+
+
 @router.get("/game/{file_name}")
 def get_page(request: Request, file_name: str):
     if not file_name or file_name.strip() != file_name:
