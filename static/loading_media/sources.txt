@@ -3,3 +3,8 @@ files:
 - 100_pixiv_u_21011625_1.jpeg
 - 100_pixiv_u_21011625_2.jpeg
 - 100_pixiv_u_21011625_3.jpeg
+
+source: https://www.pixiv.net/en/users/15762405
+files:
+- 100_pixiv_u_15762405_1.png
+- 100_pixiv_u_15762405_2.png
