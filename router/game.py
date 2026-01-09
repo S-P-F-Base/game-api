@@ -13,14 +13,18 @@ HTML_DIR = Path("templates")
 LOADING_MEDIA_DIR = Path("static/loading_media")
 
 
-def resolve_name_from_steam(steamid: str) -> str:
+async def resolve_name_from_steam(steamid: str) -> str:
     try:
-        response = httpx.get(
-            "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/",
-            params={"key": os.getenv("steam_api"), "steamids": steamid},
-            timeout=3.0,
-        )
-        response.raise_for_status()
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            response = await client.get(
+                "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/",
+                params={
+                    "key": os.environ["steam_api"],
+                    "steamids": steamid,
+                },
+            )
+            response.raise_for_status()
+
         players = response.json().get("response", {}).get("players", [])
         if players:
             return players[0].get("personaname", "гость")
@@ -56,8 +60,8 @@ def pick_weighted_media() -> str | None:
 
 
 @router.get("/game/loading", response_class=HTMLResponse)
-def loading(request: Request, steamid: str = "", mapname: str = ""):
-    name = resolve_name_from_steam(steamid) if steamid else "гость"
+async def loading(request: Request, steamid: str = "", mapname: str = ""):
+    name = await resolve_name_from_steam(steamid) if steamid else "гость"
     media_url = pick_weighted_media()
 
     return templates.TemplateResponse(
